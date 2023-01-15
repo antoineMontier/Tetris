@@ -8,6 +8,10 @@
 #include <vector>
 #include <sstream>
 
+#define RIGHT (1)
+#define CENTER (0)
+#define LEFT (-1)
+
 
 class SDL_Screen{
     
@@ -92,14 +96,15 @@ class SDL_Screen{
         void setColor(int red, int green, int blue, int alpha);
         void setColor(int red, int green, int blue);
         void setColor(int grey);
+        void setColor(SDL_Color color);
 
         void bg();
         void bg(int grey);
         void bg(int red, int green, int blue);
 
         void updateSize();
-
         void line(int x1, int y1, int x2, int y2);
+        void line(int x1, int y1, int x2, int y2, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha=255);
 
         /// @brief creates an empty square
         /// @param x the upper left x-coordinate
@@ -173,6 +178,10 @@ class SDL_Screen{
                     unsigned char red, unsigned char green=255, unsigned char blue=255, unsigned char alpha=255);
 
         void paragraph(int x, int y, const char* text, TTF_Font* font);
+        void paragraph(int x, int y, int text_width, const char* text, TTF_Font* font, int align) ;
+
+        void paragraph(int x, int y, int text_width, const char* text, TTF_Font* font, int align,
+                    unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
 
         void displayPortions(int cut_x, int cut_y, unsigned char red=255, unsigned char green=0, unsigned char blue=0);
 
