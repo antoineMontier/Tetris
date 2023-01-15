@@ -10,6 +10,7 @@ class Tetris{
         SDL_Screen *s;
         const unsigned int tetris_lines = 10;
         const unsigned int tetris_columns = 5;
+        int m[10][5];
         SDL_Event e;
         int m_x, m_y;
 
