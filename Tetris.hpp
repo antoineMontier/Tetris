@@ -2,6 +2,7 @@
 #define TETRIS_HPP
 
 #include "SDL_Screen.hpp"
+#include "Piece.hpp"
 
 class Tetris{
 
