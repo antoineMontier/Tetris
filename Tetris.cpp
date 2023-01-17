@@ -34,7 +34,7 @@ void Tetris::run(){
         displayFallingPiece(s->W()*GRID_WIDTH);
         std::cout << "4" << std::endl;
 
-        displayMatrix(s->W()*GRID_WIDTH);
+        //displayMatrix(s->W()*GRID_WIDTH);
         std::cout << "5" << std::endl;
 
         applyGravity(FALLING_SPEED);
@@ -84,7 +84,7 @@ void Tetris::run(){
             }
         }
         std::cout << "before" << std::endl;
-        s->refreshAndDetails();
+        s->refresh();
         std::cout << "after" << std::endl;
     }
 }
@@ -271,9 +271,12 @@ void Tetris::applyGravity(double strenght){
         std::cout << "11" << std::endl;
         p_y = p_y + strenght;
         std::cout << "22" << std::endl;
+        FallingPiece->setY(int(p_y + FALLING_SPEED));
+    }else{
+        saveFellPiece();
+        generateNewPiece();
     }
     std::cout << "bb" << std::endl;
-    FallingPiece->setY(int(p_y + FALLING_SPEED));
     std::cout << "cc" << std::endl;
 }
 
@@ -282,19 +285,23 @@ bool Tetris::isOnFloor(){
     int ox = FallingPiece->getX(), oy = FallingPiece->getY(), x, y;
     std::cout << "bbb, ox = "<< ox << " oy = " << oy << std::endl;
     for(int j = 0 ; j < 8 ; j++){
-        std::cout << "bbb j = " << j << std::endl;
+        std::cout << "bbb1 j = " << j << std::endl;
         if(j % 2 == 0){
             x = FallingPiece->getCoefInTab(j);//x
         }else{
             y = FallingPiece->getCoefInTab(j);//y
         }
-        std::cout << "bbb j = " << j << std::endl;
-        if(FallingPiece->maxY() >= LINES - 1){
+        std::cout << "bbb2 j = " << j << std::endl;
+        int tmpppp = FallingPiece->maxY();
+        std::cout << "bbb3 j = " << j << std::endl;
+        if(tmpppp >= LINES - 1){
+            std::cout << "validate\n";
             return true;
-        }else if(ox + x < COLUMNS && oy + y + 1 < LINES && m[ox + x][oy + y + 1] != 0){
+        }else if(ox + x < COLUMNS && ox + x >= 0 && oy + y + 1 >= 0 && oy + y + 1 < LINES && m[ox + x][oy + y + 1] != 0){
+            std::cout << "unvalidate\n";
             return true;
         }
-        std::cout << "bbb j = " << j << std::endl;
+        std::cout << "bbb4 j = " << j << std::endl;
     }
     std::cout << "ccc" << std::endl;
     return false;

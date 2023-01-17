@@ -53,7 +53,7 @@ int Piece::getCoefInTab(int index){
 }
 
 Piece::~Piece(){
-    //nothing to do
+    
 }
 
 int Piece::getX()const{return x;}
@@ -105,6 +105,10 @@ int Piece::getColor(){return color;}
 void Piece::setColor(int color){color = color;}
 
 void Piece::respawn(int ncolor, int nx, int ny, int id){
+    if(id < 000 || id > TTT)
+        throw std::invalid_argument("invalid id");
+    if(color < YELLOW || color > MAX_COLORS)
+        throw std::invalid_argument("invalid color");
     x = nx;
     y = ny;
     color = ncolor;
@@ -153,6 +157,8 @@ void Piece::setY(int ny){y = ny;}
 
 
 int Piece::pieceWidth(int id){
+    if(id < 000 || id > TTT)
+        throw std::invalid_argument("invalid id");
     switch(id){
         case OOO:
             return 2;
@@ -189,6 +195,8 @@ int Piece::pieceWidth(int id){
 }
 
 int Piece::pieceHeight(int id){
+    if(id < 000 || id > TTT)
+        throw std::invalid_argument("invalid id");
     switch(id){
         case OOO:
             return 2;
