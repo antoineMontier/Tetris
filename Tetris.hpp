@@ -17,6 +17,9 @@ class Tetris{
         SDL_Event e;
         int m_x, m_y;
         LinkedList<Piece*> * pieces;
+        int last_piece_color;
+        Piece* FallingPiece;
+        double p_x, p_y;
 
 
         const SDL_Color bg_Color = {128, 172, 255, 255};
@@ -35,7 +38,16 @@ class Tetris{
         void UpdateMatrix();
 
         void displayMatrix(unsigned int width_using);
+        
+        void generateNewPiece();
 
+        void saveFellPiece();
+
+        void resetMatrix();
+
+        void displayFallingPiece(unsigned int width_using);
+
+        void applyGravity(double strenght);
 };
 
 

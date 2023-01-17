@@ -39,6 +39,8 @@ class Piece{
 
         Piece(int id);
 
+        void respawn(int ncolor, int nx, int ny, int id);
+
         ~Piece();
 
         int getX();

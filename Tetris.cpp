@@ -5,23 +5,29 @@ using namespace std;
 Tetris::Tetris(){
     s = new SDL_Screen(1080, 720, "tetris", 60);
     pieces = new LinkedList<Piece*>();
+    FallingPiece = new Piece(III);
+    last_piece_color = 0;
+    resetMatrix();
 }
 
 Tetris::~Tetris(){
+    delete(FallingPiece);
     delete(s);
     delete(pieces);
 }
 
 void Tetris::run(){
+        generateNewPiece();
+
     while(s->isRunning()){
 
         s->bg(bg_Color.r, bg_Color.g, bg_Color.b);
 
         displayGrid(s->W()*GRID_WIDTH);
 
-        UpdateMatrix();
-        m[4][9] = YELLOW;
+        displayFallingPiece(s->W()*GRID_WIDTH);
         displayMatrix(s->W()*GRID_WIDTH);
+        applyGravity(0.05);
 
         while (SDL_PollEvent(&e)){//possible to wait for an event with SDL_WaitEvent
             switch (e.type){
@@ -81,7 +87,6 @@ void Tetris::displayGrid(unsigned int width_using){
         xxx += width_using / COLUMNS;
     }
 }
-
 
 void Tetris::UpdateMatrix(){
     for(int i=0; i<COLUMNS; i++)
@@ -157,8 +162,85 @@ void Tetris::displayMatrix(unsigned int width_using){
     }
 }
 
+void Tetris::generateNewPiece(){
+    int randColor = last_piece_color;
 
+    do{
+        randColor = rand() % MAX_COLORS + 1;
+    }while(randColor == last_piece_color);
 
+    FallingPiece->respawn(randColor, 2, 4, OOO);
+    p_x = 1;
+    p_y = 2.2;
+}
 
+void Tetris::saveFellPiece(){
+    int x,y;
+    x = FallingPiece->getX();
+    y = FallingPiece->getY();
+    m[x][y] = FallingPiece->getColor();
+    for(int j = 2 ; j < 8 ; j++){
+        if(j % 2 == 0)
+            x = FallingPiece->getCoefInTab(j);
+        else if(j % 2 == 1){
+            y = FallingPiece->getCoefInTab(j);
+            m[x][y] = FallingPiece->getColor();
+        }
+    }
+}
+
+void Tetris::resetMatrix(){
+    for(int i=0; i<COLUMNS; i++)
+        for(int j=0; j<LINES; j++)
+            m[i][j] = 0;//reset matrix
+}
+
+void Tetris::displayFallingPiece(unsigned int width_using){
+    switch(FallingPiece->getColor()){
+        case YELLOW:
+            s->setColor(255, 191, 0);
+            break;
+        case RED:
+            s->setColor(255, 0, 0);
+            break;
+        case GREEN:
+            s->setColor(0, 255, 0);
+            break;
+        case BLUE:
+            s->setColor(0, 0, 255);
+            break;
+        case LIGHT_BLUE:
+            s->setColor(0, 255, 255);
+            break;
+        case BLACK:
+            s->setColor(0, 0, 0);
+            break;
+        case MAGENTA:
+            s->setColor(255, 0, 255);
+            break;
+        case ORANGE:
+            s->setColor(255, 95, 31);
+            break;
+        case PINK:
+            s->setColor(255, 192, 203);
+            break;
+        default:
+            throw std::runtime_error("Error in color gestion\n");
+            break;
+    }
+    int x, y;
+    for(int j = 0 ; j < 8 ; j++){
+            if(j % 2 == 0)
+                x = FallingPiece->getCoefInTab(j);//x
+            else if(j % 2 == 1){
+                y = FallingPiece->getCoefInTab(j);//y
+                s->filledRect((p_x+x)*width_using/COLUMNS, (p_y+y)*s->H()/LINES, width_using/COLUMNS, s->H()/LINES, 5);
+            }
+        }
+}
+
+void Tetris::applyGravity(double strenght){
+    p_y += strenght;
+}
 
 
