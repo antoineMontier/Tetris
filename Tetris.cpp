@@ -4,10 +4,12 @@ using namespace std;
 
 Tetris::Tetris(){
     s = new SDL_Screen(1080, 720, "tetris", 60);
+    pieces = new LinkedList<Piece*>();
 }
 
 Tetris::~Tetris(){
     delete(s);
+    delete(pieces);
 }
 
 void Tetris::run(){
@@ -15,12 +17,11 @@ void Tetris::run(){
 
         s->bg(bg_Color.r, bg_Color.g, bg_Color.b);
 
-        displayGrid(s->W()*.5);
+        displayGrid(s->W()*GRID_WIDTH);
 
-
-
-
-
+        UpdateMatrix();
+        m[4][9] = YELLOW;
+        displayMatrix(s->W()*GRID_WIDTH);
 
         while (SDL_PollEvent(&e)){//possible to wait for an event with SDL_WaitEvent
             switch (e.type){
@@ -70,18 +71,91 @@ void Tetris::displayGrid(unsigned int width_using){
     int xxx = 0;
     int yyy = 0;
     s->setColor(lines_Color); 
-    for(int i = 0 ; i <= (int)tetris_lines ; i++){
+    for(int i = 0 ; i <= LINES ; i++){
         s->line(0, yyy - 1, width_using, yyy - 1);
-        yyy += s->H()/tetris_lines;
+        yyy += s->H()/LINES;
     }
     //vertical lines
-    for(int i = 0 ; i <= (int)tetris_columns ; i++){
+    for(int i = 0 ; i <= COLUMNS ; i++){
         s->line(xxx, 0, xxx, s->H());
-        xxx += width_using / tetris_columns;
+        xxx += width_using / COLUMNS;
     }
 }
 
 
+void Tetris::UpdateMatrix(){
+    for(int i=0; i<COLUMNS; i++)
+        for(int j=0; j<LINES; j++)
+            m[i][j] = 0;//reset matrix
+
+    int x, y;
+    for(int i = 0 ; i < pieces->size() ; i++){
+        x = pieces->get(i)->getX();
+        y = pieces->get(i)->getY();
+        m[x][y] = pieces->get(i)->getColor();
+        for(int j = 2 ; j < 8 ; j++){
+            if(j % 2 == 0)
+                x = pieces->get(i)->getCoefInTab(j);
+            else if(j % 2 == 1){
+                y = pieces->get(i)->getCoefInTab(j);
+                m[x][y] = pieces->get(i)->getColor();
+            }
+        }
+    }
+}
+
+void Tetris::displayMatrix(unsigned int width_using){
+    for(int i=0; i<COLUMNS; i++){
+        for(int j=0; j<LINES; j++){
+            std::cout << "m[" << i << "][" << j << "] = "<< m[i][j] <<"\n";
+            if(m[i][j] != 0){
+                std::cout << "aaa" << i << " " << j << std::endl;
+                switch(m[i][j]){
+                    case YELLOW:
+                        s->setColor(255, 191, 0);
+                        break;
+
+                    case RED:
+                        s->setColor(255, 0, 0);
+                        break;
+
+                    case GREEN:
+                        s->setColor(0, 255, 0);
+                        break;
+
+                    case BLUE:
+                        s->setColor(0, 0, 255);
+                        break;
+
+                    case LIGHT_BLUE:
+                        s->setColor(0, 255, 255);
+                        break;
+
+                    case BLACK:
+                        s->setColor(0, 0, 0);
+                        break;
+
+                    case MAGENTA:
+                        s->setColor(255, 0, 255);
+                        break;
+
+                    case ORANGE:
+                        s->setColor(255, 95, 31);
+                        break;
+
+                    case PINK:
+                        s->setColor(255, 192, 203);
+                        break;
+                    
+                    default:
+                        throw std::runtime_error("Error in color gestion\n");
+                        break;
+                }
+                s->filledRect(i*width_using/COLUMNS, j*s->H()/LINES, width_using/COLUMNS, s->H()/LINES, 5);
+            }
+        }
+    }
+}
 
 
 
