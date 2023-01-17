@@ -8,6 +8,7 @@
 #define LINES 10
 #define COLUMNS 5
 #define GRID_WIDTH (.5)
+#define FALLING_SPEED (0.05)
 
 class Tetris{
 
@@ -17,6 +18,7 @@ class Tetris{
         SDL_Event e;
         int m_x, m_y;
         int last_piece_color;
+        int last_shape;
         Piece* FallingPiece;
         double p_x, p_y;
 

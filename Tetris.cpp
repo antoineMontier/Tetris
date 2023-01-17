@@ -7,6 +7,7 @@ Tetris::Tetris(){
     s = new SDL_Screen(1080, 720, "tetris", 60);
     FallingPiece = new Piece(ZZZ);
     last_piece_color = 0;
+    last_shape = -1;
     FallingPiece->setX(2 + rand() % 3);
     FallingPiece->setY(2 + rand() % 3);
     resetMatrix();
@@ -36,7 +37,7 @@ void Tetris::run(){
         displayMatrix(s->W()*GRID_WIDTH);
         std::cout << "5" << std::endl;
 
-        applyGravity(0.05);
+        applyGravity(FALLING_SPEED);
         std::cout << "6" << std::endl;
         int yyyy = FallingPiece->getY();
         std::cout << "7" << std::endl;
@@ -179,15 +180,24 @@ void Tetris::displayMatrix(unsigned int width_using){
 }
 
 void Tetris::generateNewPiece(){
-    int randColor = last_piece_color;
 
+    int randColor = last_piece_color;
     do{
         randColor = rand() % MAX_COLORS + 1;
     }while(randColor == last_piece_color);
 
-    FallingPiece->respawn(randColor, 1, -2, ZZZ);
-    p_x = 1;
+    int randShape = last_shape;
+    do{
+        randShape = rand() % (TTT + 1);
+    }while(randShape == last_shape);
+
+    last_piece_color = randColor;
+    last_shape = randShape;
+    p_x = rand() % (COLUMNS - Piece::pieceWidth(randShape) + 1);
     p_y = -2;
+
+    FallingPiece->respawn(randColor, p_x, p_y, randShape);
+
 }
 
 void Tetris::saveFellPiece(){
@@ -263,7 +273,7 @@ void Tetris::applyGravity(double strenght){
         std::cout << "22" << std::endl;
     }
     std::cout << "bb" << std::endl;
-    FallingPiece->setY(int(p_y));
+    FallingPiece->setY(int(p_y + FALLING_SPEED));
     std::cout << "cc" << std::endl;
 }
 
@@ -272,21 +282,21 @@ bool Tetris::isOnFloor(){
     int ox = FallingPiece->getX(), oy = FallingPiece->getY(), x, y;
     std::cout << "bbb, ox = "<< ox << " oy = " << oy << std::endl;
     for(int j = 0 ; j < 8 ; j++){
-            std::cout << "bbb j = " << j << std::endl;
-            if(j % 2 == 0){
-                x = FallingPiece->getCoefInTab(j);//x
-            }else{
-                y = FallingPiece->getCoefInTab(j);//y
-            }
-            std::cout << "bbb j = " << j << std::endl;
-            if(FallingPiece->maxY() >= LINES-1){
-                return true;
-            }else if(ox + x < COLUMNS && oy + y + 1 < LINES && m[ox + x][oy + y + 1] != 0){
-                return true;
-            }
-            std::cout << "bbb j = " << j << std::endl;
+        std::cout << "bbb j = " << j << std::endl;
+        if(j % 2 == 0){
+            x = FallingPiece->getCoefInTab(j);//x
+        }else{
+            y = FallingPiece->getCoefInTab(j);//y
         }
-        std::cout << "ccc" << std::endl;
+        std::cout << "bbb j = " << j << std::endl;
+        if(FallingPiece->maxY() >= LINES - 1){
+            return true;
+        }else if(ox + x < COLUMNS && oy + y + 1 < LINES && m[ox + x][oy + y + 1] != 0){
+            return true;
+        }
+        std::cout << "bbb j = " << j << std::endl;
+    }
+    std::cout << "ccc" << std::endl;
     return false;
 }
 

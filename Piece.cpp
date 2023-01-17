@@ -150,3 +150,76 @@ void Piece::respawn(int ncolor, int nx, int ny, int id){
 
 void Piece::setX(int nx){x = nx;}
 void Piece::setY(int ny){y = ny;}
+
+
+int Piece::pieceWidth(int id){
+    switch(id){
+        case OOO:
+            return 2;
+            break;
+        
+        case SSS:
+            return 3;
+            break;
+                
+        case III:
+            return 1;
+            break;
+                    
+        case ZZZ:
+            return 3;
+            break;
+                    
+        case LLL:
+            return 2;
+            break;
+                    
+        case JJJ:
+            return 2;
+            break;
+                    
+        case TTT:
+            return 3;
+            break;
+        
+        default:
+            return -1;
+            break;
+    }
+}
+
+int Piece::pieceHeight(int id){
+    switch(id){
+        case OOO:
+            return 2;
+            break;
+        
+        case SSS:
+            return 2;
+            break;
+                
+        case III:
+            return 3;
+            break;
+                    
+        case ZZZ:
+            return 2;
+            break;
+                    
+        case LLL:
+            return 3;
+            break;
+                    
+        case JJJ:
+            return 3;
+            break;
+                    
+        case TTT:
+            return 3;
+            break;
+        
+        default:
+            return -1;
+            break;
+    }
+}

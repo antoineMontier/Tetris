@@ -63,6 +63,9 @@ class Piece{
 
         void setColor(int color);
 
+        static int pieceWidth(int id);
+        static int pieceHeight(int id);
+
 
 };
 #endif
