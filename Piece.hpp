@@ -43,14 +43,19 @@ class Piece{
 
         ~Piece();
 
-        int getX();
-        int getY();
+        int getX() const;
+        int getY() const;
+        void setX(int nx);
+        void setY(int ny);
 
         int getCoefInTab(int index);
 
         void gravity(int power);
 
-        int bottomY();
+        int maxX() const;
+        int maxY() const;
+        int minX() const;
+        int minY() const;
 
         void rotate(int id);
 

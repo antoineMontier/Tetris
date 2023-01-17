@@ -56,21 +56,45 @@ Piece::~Piece(){
     //nothing to do
 }
 
-int Piece::getX(){return x;}
-int Piece::getY(){return y;}
+int Piece::getX()const{return x;}
+int Piece::getY()const{std::cout << "eeeeeee y = " << y << "\n"; return y;}
 
 void Piece::gravity(int power){
     y+=power;
 }
 
-int Piece::bottomY(){
+int Piece::maxX() const{
+    int xmax = 0;
+    for(int i = 0 ; i < 8 ; i+=2)
+        if(cells[i] > xmax)
+            xmax = cells[i];
+    return y + xmax;
+}
+
+int Piece::maxY() const{
+    int ymax = 0;
+    for(int i = 1 ; i < 8 ; i+=2)
+        if(cells[i] > ymax)
+            ymax = cells[i];
+    return y + ymax;
+}
+
+int Piece::minX() const{
+    int xmin = 0;
+    for(int i = 0 ; i < 8 ; i+=2)
+        if(cells[i] < xmin)
+            xmin = cells[i];
+    return y + xmin;
+}
+
+int Piece::minY() const{
     int ymin = 0;
     for(int i = 1 ; i < 8 ; i+=2)
-        if(cells[i] > ymin)
-        
+        if(cells[i] < ymin)
             ymin = cells[i];
     return y + ymin;
 }
+
 
 void Piece::rotate(int id){
     
@@ -123,3 +147,6 @@ void Piece::respawn(int ncolor, int nx, int ny, int id){
         cells[6] = 1; cells[7] = 1;//middle down
     }
 }
+
+void Piece::setX(int nx){x = nx;}
+void Piece::setY(int ny){y = ny;}

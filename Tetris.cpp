@@ -3,31 +3,45 @@
 using namespace std;
 
 Tetris::Tetris(){
+    srand(time(NULL));
     s = new SDL_Screen(1080, 720, "tetris", 60);
-    pieces = new LinkedList<Piece*>();
-    FallingPiece = new Piece(III);
+    FallingPiece = new Piece(ZZZ);
     last_piece_color = 0;
+    FallingPiece->setX(2 + rand() % 3);
+    FallingPiece->setY(2 + rand() % 3);
     resetMatrix();
 }
 
 Tetris::~Tetris(){
     delete(FallingPiece);
     delete(s);
-    delete(pieces);
 }
 
 void Tetris::run(){
-        generateNewPiece();
+    generateNewPiece();
 
     while(s->isRunning()){
+        std::cout << "1" << std::endl;
+
 
         s->bg(bg_Color.r, bg_Color.g, bg_Color.b);
+        std::cout << "2" << std::endl;
 
         displayGrid(s->W()*GRID_WIDTH);
+        std::cout << "3" << std::endl;
 
         displayFallingPiece(s->W()*GRID_WIDTH);
+        std::cout << "4" << std::endl;
+
         displayMatrix(s->W()*GRID_WIDTH);
+        std::cout << "5" << std::endl;
+
         applyGravity(0.05);
+        std::cout << "6" << std::endl;
+        int yyyy = FallingPiece->getY();
+        std::cout << "7" << std::endl;
+        std::cout << "p_y = " << p_y  << "  \ty = " << yyyy  << std::endl;
+        std::cout << "8" << std::endl;
 
         while (SDL_PollEvent(&e)){//possible to wait for an event with SDL_WaitEvent
             switch (e.type){
@@ -68,7 +82,9 @@ void Tetris::run(){
                     break;
             }
         }
+        std::cout << "before" << std::endl;
         s->refreshAndDetails();
+        std::cout << "after" << std::endl;
     }
 }
 
@@ -89,7 +105,7 @@ void Tetris::displayGrid(unsigned int width_using){
 }
 
 void Tetris::UpdateMatrix(){
-    for(int i=0; i<COLUMNS; i++)
+    /*for(int i=0; i<COLUMNS; i++)
         for(int j=0; j<LINES; j++)
             m[i][j] = 0;//reset matrix
 
@@ -106,15 +122,15 @@ void Tetris::UpdateMatrix(){
                 m[x][y] = pieces->get(i)->getColor();
             }
         }
-    }
+    }*/
 }
 
 void Tetris::displayMatrix(unsigned int width_using){
     for(int i=0; i<COLUMNS; i++){
         for(int j=0; j<LINES; j++){
-            std::cout << "m[" << i << "][" << j << "] = "<< m[i][j] <<"\n";
+            //std::cout << "m[" << i << "][" << j << "] = "<< m[i][j] <<"\n";
             if(m[i][j] != 0){
-                std::cout << "aaa" << i << " " << j << std::endl;
+                //std::cout << "aaa" << i << " " << j << std::endl;
                 switch(m[i][j]){
                     case YELLOW:
                         s->setColor(255, 191, 0);
@@ -169,9 +185,9 @@ void Tetris::generateNewPiece(){
         randColor = rand() % MAX_COLORS + 1;
     }while(randColor == last_piece_color);
 
-    FallingPiece->respawn(randColor, 2, 4, OOO);
+    FallingPiece->respawn(randColor, 1, -2, ZZZ);
     p_x = 1;
-    p_y = 2.2;
+    p_y = -2;
 }
 
 void Tetris::saveFellPiece(){
@@ -240,7 +256,39 @@ void Tetris::displayFallingPiece(unsigned int width_using){
 }
 
 void Tetris::applyGravity(double strenght){
-    p_y += strenght;
+    std::cout << "aa" << std::endl;
+    if(!isOnFloor()){
+        std::cout << "11" << std::endl;
+        p_y = p_y + strenght;
+        std::cout << "22" << std::endl;
+    }
+    std::cout << "bb" << std::endl;
+    FallingPiece->setY(int(p_y));
+    std::cout << "cc" << std::endl;
 }
+
+bool Tetris::isOnFloor(){
+    std::cout << "aaa" << std::endl;
+    int ox = FallingPiece->getX(), oy = FallingPiece->getY(), x, y;
+    std::cout << "bbb, ox = "<< ox << " oy = " << oy << std::endl;
+    for(int j = 0 ; j < 8 ; j++){
+            std::cout << "bbb j = " << j << std::endl;
+            if(j % 2 == 0){
+                x = FallingPiece->getCoefInTab(j);//x
+            }else{
+                y = FallingPiece->getCoefInTab(j);//y
+            }
+            std::cout << "bbb j = " << j << std::endl;
+            if(FallingPiece->maxY() >= LINES-1){
+                return true;
+            }else if(ox + x < COLUMNS && oy + y + 1 < LINES && m[ox + x][oy + y + 1] != 0){
+                return true;
+            }
+            std::cout << "bbb j = " << j << std::endl;
+        }
+        std::cout << "ccc" << std::endl;
+    return false;
+}
+
 
 

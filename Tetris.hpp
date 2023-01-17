@@ -16,7 +16,6 @@ class Tetris{
         int m[COLUMNS][LINES];
         SDL_Event e;
         int m_x, m_y;
-        LinkedList<Piece*> * pieces;
         int last_piece_color;
         Piece* FallingPiece;
         double p_x, p_y;
@@ -48,6 +47,8 @@ class Tetris{
         void displayFallingPiece(unsigned int width_using);
 
         void applyGravity(double strenght);
+
+        bool isOnFloor();
 };
 
 
