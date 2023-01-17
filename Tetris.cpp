@@ -34,7 +34,7 @@ void Tetris::run(){
         displayFallingPiece(s->W()*GRID_WIDTH);
         std::cout << "4" << std::endl;
 
-        //displayMatrix(s->W()*GRID_WIDTH);
+        displayMatrix(s->W()*GRID_WIDTH);
         std::cout << "5" << std::endl;
 
         applyGravity(FALLING_SPEED);
@@ -203,24 +203,33 @@ void Tetris::generateNewPiece(){
 
 void Tetris::saveFellPiece(){
     std::cout << "save1"<<std::endl;
-    int x = FallingPiece->getX();
-    int y = FallingPiece->getY();
-
-    if(x < 0 || x >= COLUMNS)
+    int ox = FallingPiece->getX();
+    int oy = FallingPiece->getY();
+    std::cout << "save1 ended , x = "<<ox << " y = " <<oy<<std::endl;
+    if(ox < 0 || ox >= COLUMNS){
+        std::cout << "x value is wrong\n"; 
         throw new std::invalid_argument("x value is wrong");
-    if(y < 0 || y >= LINES)
+    }else if(oy < 0 || oy >= LINES){
+        std::cout << "y value is wrong\n"; 
         throw new std::invalid_argument("y value is wrong");
-
-    m[x][y] = FallingPiece->getColor();
+    }
+    std::cout << "checked values\n";
+    int ccc = FallingPiece->getColor();
+    std::cout << "color = " << ccc << std::endl;
+    m[ox][oy] = ccc;
+    int x, y;
     for(int j = 2 ; j < 8 ; j++){
         if(j % 2 == 0)
-            x = FallingPiece->getCoefInTab(j);
+            x = ox+FallingPiece->getCoefInTab(j);
         else if(j % 2 == 1){
-            y = FallingPiece->getCoefInTab(j);
-            if(x < 0 || x >= COLUMNS)
-                throw new std::invalid_argument("x value is wrong");
-            if(y < 0 || y >= LINES)
-                throw new std::invalid_argument("y value is wrong");
+            y = oy+FallingPiece->getCoefInTab(j);
+            if(x < 0 || x >= COLUMNS){
+                std::cout << "x value is wrong " << y << std::endl;
+                throw new std::invalid_argument("x value is wrong\n");
+            }else if(y < 0 || y >= LINES){
+                std::cout << "y value is wrong " << y << std::endl;
+                throw new std::invalid_argument("y value is wrong\n");
+            }
             m[x][y] = FallingPiece->getColor();
         }
     }
@@ -296,15 +305,15 @@ bool Tetris::isOnFloor(){
     int ox = FallingPiece->getX(), oy = FallingPiece->getY(), x, y;
     std::cout << "bbb, ox = "<< ox << " oy = " << oy << std::endl;
     for(int j = 0 ; j < 8 ; j++){
-        std::cout << "bbb1 j = " << j << std::endl;
+        //std::cout << "bbb1 j = " << j << std::endl;
         if(j % 2 == 0){
             x = FallingPiece->getCoefInTab(j);//x
         }else{
             y = FallingPiece->getCoefInTab(j);//y
         }
-        std::cout << "bbb2 j = " << j << std::endl;
+        //std::cout << "bbb2 j = " << j << std::endl;
         int tmpppp = FallingPiece->maxY();
-        std::cout << "bbb3 j = " << j << std::endl;
+        //std::cout << "bbb3 j = " << j << std::endl;
         if(tmpppp >= LINES - 1){
             std::cout << "validate\n";
             return true;
@@ -312,7 +321,7 @@ bool Tetris::isOnFloor(){
             std::cout << "unvalidate\n";
             return true;
         }
-        std::cout << "bbb4 j = " << j << std::endl;
+        //std::cout << "bbb4 j = " << j << std::endl;
     }
     std::cout << "ccc" << std::endl;
     return false;
