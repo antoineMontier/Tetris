@@ -11,6 +11,8 @@ Tetris::Tetris(){
     FallingPiece->setX(2 + rand() % 3);
     FallingPiece->setY(2 + rand() % 3);
     resetMatrix();
+    game_running = true;
+    move_piece = NO_MOVE;
 }
 
 Tetris::~Tetris(){
@@ -22,27 +24,14 @@ void Tetris::run(){
     generateNewPiece();
 
     while(s->isRunning()){
-        std::cout << "1" << std::endl;
 
-
-        s->bg(bg_Color.r, bg_Color.g, bg_Color.b);
-        std::cout << "2" << std::endl;
-
-        displayGrid(s->W()*GRID_WIDTH);
-        std::cout << "3" << std::endl;
-
-        displayFallingPiece(s->W()*GRID_WIDTH);
-        std::cout << "4" << std::endl;
-
-        displayMatrix(s->W()*GRID_WIDTH);
-        std::cout << "5" << std::endl;
-
-        applyGravity(FALLING_SPEED);
-        std::cout << "6" << std::endl;
-        int yyyy = FallingPiece->getY();
-        std::cout << "7" << std::endl;
-        std::cout << "p_y = " << p_y  << "  \ty = " << yyyy  << std::endl;
-        std::cout << "8" << std::endl;
+        if(game_running){
+            s->bg(bg_Color.r, bg_Color.g, bg_Color.b);
+            displayGrid(s->W()*GRID_WIDTH);
+            displayFallingPiece(s->W()*GRID_WIDTH);
+            displayMatrix(s->W()*GRID_WIDTH);
+            applyGravity(FALLING_SPEED);
+        }
 
         while (SDL_PollEvent(&e)){//possible to wait for an event with SDL_WaitEvent
             switch (e.type){
@@ -64,6 +53,13 @@ void Tetris::run(){
                 case SDL_KEYDOWN: // SDL_KEYDOWN : hold a key            SDL_KEYUP : release a key
                     switch (e.key.keysym.sym){ // returns the key ('0' ; 'e' ; 'SPACE'...)
 
+                        case SDLK_z:
+                            move_piece = RIGHT_MOVE;
+                            break;
+                        case SDLK_a:
+                            move_piece = LEFT_MOVE;
+                            break;
+
                     case SDLK_ESCAPE:
                         s->stopRunning();
                         break;
@@ -83,10 +79,7 @@ void Tetris::run(){
                     break;
             }
         }
-        std::cout << "before" << std::endl;
         s->refresh();
-        std::cout << SDL_GetError() <<std::endl;
-        std::cout << "after" << std::endl;
     }
 }
 
@@ -286,46 +279,68 @@ void Tetris::displayFallingPiece(unsigned int width_using){
 }
 
 void Tetris::applyGravity(double strenght){
-    std::cout << "aa" << std::endl;
     if(!isOnFloor()){
-        std::cout << "11" << std::endl;
+        if(move_piece == RIGHT_MOVE){
+            if(FallingPiece->maxX() < COLUMNS-1){
+                p_x++;
+                FallingPiece->setX(FallingPiece->getX()+1);
+            }
+            move_piece = NO_MOVE;
+        }else if(move_piece == LEFT_MOVE){
+            if(FallingPiece->minX() > 0){
+                p_x--;
+                FallingPiece->setX(FallingPiece->getX()-1);
+            }
+            move_piece = NO_MOVE;
+        }
         p_y = p_y + strenght;
-        std::cout << "22" << std::endl;
         FallingPiece->setY(int(p_y + FALLING_SPEED));
-    }else{
+    }else if(FallingPiece->minY() >= 0){
         saveFellPiece();
         generateNewPiece();
+    }else{
+        game_running = false;
     }
-    std::cout << "bb" << std::endl;
-    std::cout << "cc" << std::endl;
 }
 
 bool Tetris::isOnFloor(){
-    std::cout << "aaa" << std::endl;
     int ox = FallingPiece->getX(), oy = FallingPiece->getY(), x, y;
-    std::cout << "bbb, ox = "<< ox << " oy = " << oy << std::endl;
     for(int j = 0 ; j < 8 ; j++){
-        //std::cout << "bbb1 j = " << j << std::endl;
         if(j % 2 == 0){
             x = FallingPiece->getCoefInTab(j);//x
         }else{
             y = FallingPiece->getCoefInTab(j);//y
         }
-        //std::cout << "bbb2 j = " << j << std::endl;
         int tmpppp = FallingPiece->maxY();
-        //std::cout << "bbb3 j = " << j << std::endl;
         if(tmpppp >= LINES - 1){
+            return true;
+        }else if(ox + x < COLUMNS && ox + x >= 0 && oy + y + 1 >= 0 && oy + y + 1 < LINES && m[ox + x][oy + y + 1] != 0){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Tetris::isUpCeil(){
+    int ox = FallingPiece->getX(), oy = FallingPiece->getY(), x, y;
+    if(oy < 0)
+        return true;
+    for(int j = 0 ; j < 8 ; j++){
+        if(j % 2 == 0){
+            x = FallingPiece->getCoefInTab(j);//x
+        }else{
+            y = FallingPiece->getCoefInTab(j);//y
+        }
+        if(FallingPiece->maxY() >= LINES - 1){
             std::cout << "validate\n";
             return true;
         }else if(ox + x < COLUMNS && ox + x >= 0 && oy + y + 1 >= 0 && oy + y + 1 < LINES && m[ox + x][oy + y + 1] != 0){
             std::cout << "unvalidate\n";
             return true;
         }
-        //std::cout << "bbb4 j = " << j << std::endl;
     }
     std::cout << "ccc" << std::endl;
     return false;
 }
-
 
 

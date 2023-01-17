@@ -6,9 +6,13 @@
 #include "LinkedList.cpp"
 
 #define LINES 10
-#define COLUMNS 5
+#define COLUMNS 10
 #define GRID_WIDTH (.5)
 #define FALLING_SPEED (0.1)
+
+#define NO_MOVE 0
+#define RIGHT_MOVE (1)
+#define LEFT_MOVE (-1)
 
 class Tetris{
 
@@ -21,6 +25,8 @@ class Tetris{
         int last_shape;
         Piece* FallingPiece;
         double p_x, p_y;
+        bool game_running;
+        int move_piece;
 
 
         const SDL_Color bg_Color = {128, 172, 255, 255};
@@ -51,6 +57,8 @@ class Tetris{
         void applyGravity(double strenght);
 
         bool isOnFloor();
+
+        bool isUpCeil();
 };
 
 

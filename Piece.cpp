@@ -57,7 +57,7 @@ Piece::~Piece(){
 }
 
 int Piece::getX()const{return x;}
-int Piece::getY()const{std::cout << "getY() : eeeeeee y = " << y << "\n"; return y;}
+int Piece::getY()const{return y;}
 
 void Piece::gravity(int power){
     y+=power;
@@ -68,7 +68,7 @@ int Piece::maxX() const{
     for(int i = 0 ; i < 8 ; i+=2)
         if(cells[i] > xmax)
             xmax = cells[i];
-    return y + xmax;
+    return x + xmax;
 }
 
 int Piece::maxY() const{
@@ -84,7 +84,7 @@ int Piece::minX() const{
     for(int i = 0 ; i < 8 ; i+=2)
         if(cells[i] < xmin)
             xmin = cells[i];
-    return y + xmin;
+    return x + xmin;
 }
 
 int Piece::minY() const{
