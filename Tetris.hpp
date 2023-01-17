@@ -8,7 +8,7 @@
 #define LINES 10
 #define COLUMNS 5
 #define GRID_WIDTH (.5)
-#define FALLING_SPEED (0.05)
+#define FALLING_SPEED (0.1)
 
 class Tetris{
 

@@ -57,7 +57,7 @@ Piece::~Piece(){
 }
 
 int Piece::getX()const{return x;}
-int Piece::getY()const{std::cout << "eeeeeee y = " << y << "\n"; return y;}
+int Piece::getY()const{std::cout << "getY() : eeeeeee y = " << y << "\n"; return y;}
 
 void Piece::gravity(int power){
     y+=power;

@@ -85,6 +85,7 @@ void Tetris::run(){
         }
         std::cout << "before" << std::endl;
         s->refresh();
+        std::cout << SDL_GetError() <<std::endl;
         std::cout << "after" << std::endl;
     }
 }
@@ -201,15 +202,25 @@ void Tetris::generateNewPiece(){
 }
 
 void Tetris::saveFellPiece(){
-    int x,y;
-    x = FallingPiece->getX();
-    y = FallingPiece->getY();
+    std::cout << "save1"<<std::endl;
+    int x = FallingPiece->getX();
+    int y = FallingPiece->getY();
+
+    if(x < 0 || x >= COLUMNS)
+        throw new std::invalid_argument("x value is wrong");
+    if(y < 0 || y >= LINES)
+        throw new std::invalid_argument("y value is wrong");
+
     m[x][y] = FallingPiece->getColor();
     for(int j = 2 ; j < 8 ; j++){
         if(j % 2 == 0)
             x = FallingPiece->getCoefInTab(j);
         else if(j % 2 == 1){
             y = FallingPiece->getCoefInTab(j);
+            if(x < 0 || x >= COLUMNS)
+                throw new std::invalid_argument("x value is wrong");
+            if(y < 0 || y >= LINES)
+                throw new std::invalid_argument("y value is wrong");
             m[x][y] = FallingPiece->getColor();
         }
     }
