@@ -8,13 +8,13 @@
 #define LINES 10
 #define COLUMNS 10
 #define GRID_WIDTH (.5)
-#define FALLING_SPEED (0.1)
+#define FALLING_SPEED (.05)
 
 #define NO_MOVE 0
 #define RIGHT_MOVE (1)
 #define LEFT_MOVE (-1)
 
-class Tetris{
+class Tetris{//to add : quik gravity increase when down arrow is pressed
 
     private:
         SDL_Screen *s;
@@ -59,6 +59,10 @@ class Tetris{
         bool isOnFloor();
 
         bool isUpCeil();
+
+        bool canMoveRight();
+
+        bool canMoveLeft();
 };
 
 

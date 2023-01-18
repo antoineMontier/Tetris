@@ -52,11 +52,16 @@ void Tetris::run(){
 
                 case SDL_KEYDOWN: // SDL_KEYDOWN : hold a key            SDL_KEYUP : release a key
                     switch (e.key.keysym.sym){ // returns the key ('0' ; 'e' ; 'SPACE'...)
-
                         case SDLK_z:
                             move_piece = RIGHT_MOVE;
                             break;
                         case SDLK_a:
+                            move_piece = LEFT_MOVE;
+                            break;
+                        case SDLK_RIGHT:
+                            move_piece = RIGHT_MOVE;
+                            break;
+                        case SDLK_LEFT:
                             move_piece = LEFT_MOVE;
                             break;
 
@@ -195,20 +200,14 @@ void Tetris::generateNewPiece(){
 }
 
 void Tetris::saveFellPiece(){
-    std::cout << "save1"<<std::endl;
     int ox = FallingPiece->getX();
     int oy = FallingPiece->getY();
-    std::cout << "save1 ended , x = "<<ox << " y = " <<oy<<std::endl;
     if(ox < 0 || ox >= COLUMNS){
-        std::cout << "x value is wrong\n"; 
         throw new std::invalid_argument("x value is wrong");
     }else if(oy < 0 || oy >= LINES){
-        std::cout << "y value is wrong\n"; 
         throw new std::invalid_argument("y value is wrong");
     }
-    std::cout << "checked values\n";
     int ccc = FallingPiece->getColor();
-    std::cout << "color = " << ccc << std::endl;
     m[ox][oy] = ccc;
     int x, y;
     for(int j = 2 ; j < 8 ; j++){
@@ -217,10 +216,8 @@ void Tetris::saveFellPiece(){
         else if(j % 2 == 1){
             y = oy+FallingPiece->getCoefInTab(j);
             if(x < 0 || x >= COLUMNS){
-                std::cout << "x value is wrong " << y << std::endl;
                 throw new std::invalid_argument("x value is wrong\n");
             }else if(y < 0 || y >= LINES){
-                std::cout << "y value is wrong " << y << std::endl;
                 throw new std::invalid_argument("y value is wrong\n");
             }
             m[x][y] = FallingPiece->getColor();
@@ -273,7 +270,8 @@ void Tetris::displayFallingPiece(unsigned int width_using){
                 x = FallingPiece->getCoefInTab(j);//x
             else if(j % 2 == 1){
                 y = FallingPiece->getCoefInTab(j);//y
-                s->filledRect((p_x+x)*width_using/COLUMNS, (p_y+y)*s->H()/LINES, width_using/COLUMNS, s->H()/LINES, 5);
+                s->filledRect((p_x+x)*width_using/COLUMNS, (p_y+y)*s->H()/LINES, width_using/COLUMNS, s->H()/LINES, 5, 255, 255, 255, 100);
+                s->filledRect((FallingPiece->getX()+x)*width_using/COLUMNS, (FallingPiece->getY()+y)*s->H()/LINES, width_using/COLUMNS, s->H()/LINES, 5, 255, 255, 255, 150);
             }
         }
 }
@@ -281,13 +279,13 @@ void Tetris::displayFallingPiece(unsigned int width_using){
 void Tetris::applyGravity(double strenght){
     if(!isOnFloor()){
         if(move_piece == RIGHT_MOVE){
-            if(FallingPiece->maxX() < COLUMNS-1){
+            if(canMoveRight()){
                 p_x++;
                 FallingPiece->setX(FallingPiece->getX()+1);
             }
             move_piece = NO_MOVE;
         }else if(move_piece == LEFT_MOVE){
-            if(FallingPiece->minX() > 0){
+            if(canMoveLeft()){
                 p_x--;
                 FallingPiece->setX(FallingPiece->getX()-1);
             }
@@ -344,3 +342,37 @@ bool Tetris::isUpCeil(){
 }
 
 
+bool Tetris::canMoveLeft(){
+    if(FallingPiece->minX() <= 0)
+        return false;
+    int ox = FallingPiece->getX();
+    int oy = FallingPiece->getY();
+    int x, y;
+    for(int j = 0 ; j < 8 ; j++){
+        if(j % 2 == 0)
+            x = FallingPiece->getCoefInTab(j);//x
+        else
+            y = FallingPiece->getCoefInTab(j);//y
+        if(((p_y + y >= 0 && oy + y +1 < LINES) && m[ox + x - 1][int(p_y + y+1)] != 0) ||
+            ((p_y + y >= 0 && oy + y < LINES) && m[ox + x - 1][int(p_y + y)] != 0))
+            return false;
+    }
+    return true;
+}
+
+bool Tetris::canMoveRight(){
+    if(FallingPiece->maxX() >= COLUMNS-1)
+        return false;
+    int ox = FallingPiece->getX();
+    int oy = FallingPiece->getY();
+    int x, y;
+    for(int j = 0 ; j < 8 ; j++){
+        if(j % 2 == 0)
+            x = FallingPiece->getCoefInTab(j);//x
+        else
+            y = FallingPiece->getCoefInTab(j);//y
+        if(ox + x + 1 < COLUMNS && ox + x >= 0 && oy + y >= 0 && oy + y +1 < LINES && m[ox + x + 1][oy + y+1] != 0)
+            return false;
+    }
+    return true;
+}
