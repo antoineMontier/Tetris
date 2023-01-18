@@ -5,7 +5,7 @@
 #include "Piece.hpp"
 #include "LinkedList.cpp"
 
-#define LINES 10
+#define LINES 20
 #define COLUMNS 10
 #define GRID_WIDTH (.5)
 #define FALLING_SPEED (.05)
@@ -63,6 +63,11 @@ class Tetris{//to add : quik gravity increase when down arrow is pressed
         bool canMoveRight();
 
         bool canMoveLeft();
+
+        void checkAndRemoveLines();
+
+        void deleteLine(int line);
+
 };
 
 

@@ -270,8 +270,7 @@ void Tetris::displayFallingPiece(unsigned int width_using){
                 x = FallingPiece->getCoefInTab(j);//x
             else if(j % 2 == 1){
                 y = FallingPiece->getCoefInTab(j);//y
-                s->filledRect((p_x+x)*width_using/COLUMNS, (p_y+y)*s->H()/LINES, width_using/COLUMNS, s->H()/LINES, 5, 255, 255, 255, 100);
-                s->filledRect((FallingPiece->getX()+x)*width_using/COLUMNS, (FallingPiece->getY()+y)*s->H()/LINES, width_using/COLUMNS, s->H()/LINES, 5, 255, 255, 255, 150);
+                s->filledRect((p_x+x)*width_using/COLUMNS, (p_y+y)*s->H()/LINES, width_using/COLUMNS, s->H()/LINES, 2);
             }
         }
 }
@@ -341,7 +340,6 @@ bool Tetris::isUpCeil(){
     return false;
 }
 
-
 bool Tetris::canMoveLeft(){
     if(FallingPiece->minX() <= 0)
         return false;
@@ -353,8 +351,7 @@ bool Tetris::canMoveLeft(){
             x = FallingPiece->getCoefInTab(j);//x
         else
             y = FallingPiece->getCoefInTab(j);//y
-        if(((p_y + y >= 0 && oy + y +1 < LINES) && m[ox + x - 1][int(p_y + y+1)] != 0) ||
-            ((p_y + y >= 0 && oy + y < LINES) && m[ox + x - 1][int(p_y + y)] != 0))
+        if(((p_y + y >= 0 && oy + y +1 < LINES) && m[ox + x - 1][int(p_y + y+1)] != 0) || ((p_y + y >= 0 && oy + y < LINES) && m[ox + x - 1][int(p_y + y)] != 0))
             return false;
     }
     return true;
@@ -371,8 +368,39 @@ bool Tetris::canMoveRight(){
             x = FallingPiece->getCoefInTab(j);//x
         else
             y = FallingPiece->getCoefInTab(j);//y
-        if(ox + x + 1 < COLUMNS && ox + x >= 0 && oy + y >= 0 && oy + y +1 < LINES && m[ox + x + 1][oy + y+1] != 0)
+        if(((p_y + y >= 0 && oy + y +1 < LINES) && m[ox + x + 1][int(p_y + y+1)] != 0) || ((p_y + y >= 0 && oy + y < LINES) && m[ox + x + 1][int(p_y + y)] != 0))
             return false;
     }
     return true;
 }
+
+void Tetris::checkAndRemoveLines(){
+    //check
+    bool full;
+    for(int l = LINES-1 ; l >= 0 ; l--){
+        full = true;
+        for(int c = 0 ; c < COLUMNS ; c++){
+            full = full && m[c][l] != 0;
+        }
+        if(full){
+            deleteLine(l);
+        }
+    }
+
+}
+
+void Tetris::deleteLine(int line){ 
+    if(line < 0 || line >= LINES)
+        throw std::invalid_argument("line index out of range\n");
+    for(int i = line; i > 0 ; i--)
+        for(int c = 0 ; c < COLUMNS; c++)
+            m[c][i] = m[c][i-1];
+    for(int i = 0 ; i < COLUMNS ; i++)
+        m[0][i] = 0;
+}
+
+
+
+
+
+
