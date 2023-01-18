@@ -5,7 +5,7 @@
 #include "Piece.hpp"
 #include "LinkedList.cpp"
 
-#define LINES 20
+#define LINES 12
 #define COLUMNS 10
 #define GRID_WIDTH (.5)
 #define FALLING_SPEED (.05)

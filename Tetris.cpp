@@ -4,7 +4,7 @@ using namespace std;
 
 Tetris::Tetris(){
     srand(time(NULL));
-    s = new SDL_Screen(1080, 720, "tetris", 60);
+    s = new SDL_Screen(1080, 720, "tetris", 30);
     FallingPiece = new Piece(ZZZ);
     last_piece_color = 0;
     last_shape = -1;
@@ -270,6 +270,7 @@ void Tetris::displayFallingPiece(unsigned int width_using){
                 x = FallingPiece->getCoefInTab(j);//x
             else if(j % 2 == 1){
                 y = FallingPiece->getCoefInTab(j);//y
+                s->filledRect((FallingPiece->getX()+x)*width_using/COLUMNS, (FallingPiece->getY()+y)*s->H()/LINES, width_using/COLUMNS, s->H()/LINES, 2, 255, 255, 255, 128);
                 s->filledRect((p_x+x)*width_using/COLUMNS, (p_y+y)*s->H()/LINES, width_using/COLUMNS, s->H()/LINES, 2);
             }
         }
@@ -348,27 +349,27 @@ bool Tetris::canMoveLeft(){
     int x, y;
     for(int j = 0 ; j < 8 ; j++){
         if(j % 2 == 0)
-            x = FallingPiece->getCoefInTab(j);//x
+            x = ox + FallingPiece->getCoefInTab(j);//x
         else
-            y = FallingPiece->getCoefInTab(j);//y
-        if(((p_y + y >= 0 && oy + y +1 < LINES) && m[ox + x - 1][int(p_y + y+1)] != 0) || ((p_y + y >= 0 && oy + y < LINES) && m[ox + x - 1][int(p_y + y)] != 0))
+            y = oy + FallingPiece->getCoefInTab(j);//y
+        if((y < LINES - 1) && x > 0 && m[x-1][y] != 0)
             return false;
     }
     return true;
 }
 
 bool Tetris::canMoveRight(){
-    if(FallingPiece->maxX() >= COLUMNS-1)
+    if(FallingPiece->maxX() >= COLUMNS - 1)
         return false;
     int ox = FallingPiece->getX();
     int oy = FallingPiece->getY();
     int x, y;
     for(int j = 0 ; j < 8 ; j++){
         if(j % 2 == 0)
-            x = FallingPiece->getCoefInTab(j);//x
+            x = ox + FallingPiece->getCoefInTab(j);//x
         else
-            y = FallingPiece->getCoefInTab(j);//y
-        if(((p_y + y >= 0 && oy + y +1 < LINES) && m[ox + x + 1][int(p_y + y+1)] != 0) || ((p_y + y >= 0 && oy + y < LINES) && m[ox + x + 1][int(p_y + y)] != 0))
+            y = oy + FallingPiece->getCoefInTab(j);//y
+        if((y < LINES - 1) && x < COLUMNS-1 && m[x+1][y] != 0)
             return false;
     }
     return true;
@@ -386,7 +387,6 @@ void Tetris::checkAndRemoveLines(){
             deleteLine(l);
         }
     }
-
 }
 
 void Tetris::deleteLine(int line){ 
